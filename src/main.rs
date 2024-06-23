@@ -13,6 +13,9 @@ struct Cli {
 
     #[arg(short, long, action = clap::ArgAction::Count)]
     verbosity: u8,
+
+    #[arg(short, long)]
+    bind: Option<String>,
 }
 
 impl Cli {
@@ -27,6 +30,10 @@ impl Cli {
                 _ => LevelFilter::Trace,
             }
         }
+    }
+
+    fn bind_addr(&self) -> &str {
+        self.bind.as_deref().unwrap_or("0.0.0.0:8090")
     }
 }
 
@@ -54,7 +61,7 @@ async fn main() -> Result<(), std::io::Error> {
     app.at("/").post(post);
     app.at("/sse/").get(tide::sse::endpoint(handler));
 
-    app.listen("0.0.0.0:8090").await?;
+    app.listen(cli.bind_addr()).await?;
 
     Ok(())
 }
