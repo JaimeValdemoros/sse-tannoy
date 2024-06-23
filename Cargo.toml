@@ -7,5 +7,6 @@ edition = "2021"
 [dependencies]
 async-broadcast = "0.7.1"
 async-std = { version = "1.12.0", features = ["attributes"] }
+clap = { version = "4.5.7", features = ["derive"] }
 serde = { version = "1.0.203", features = ["derive"] }
-tide = "0.16.0"
+tide = { version = "0.16.0", features = ["logger"] }

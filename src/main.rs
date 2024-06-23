@@ -3,6 +3,32 @@ use std::time::Duration;
 
 use async_broadcast::{broadcast, InactiveReceiver, RecvError, SendError, Sender};
 use async_std::io::timeout;
+use clap::Parser;
+
+#[derive(Parser)]
+#[command(version, about, long_about = None)]
+struct Cli {
+    #[arg(short, long)]
+    quiet: bool,
+
+    #[arg(short, long, action = clap::ArgAction::Count)]
+    verbosity: u8,
+}
+
+impl Cli {
+    fn log_level(&self) -> tide::log::LevelFilter {
+        use tide::log::LevelFilter;
+        if self.quiet {
+            LevelFilter::Error
+        } else {
+            match self.verbosity {
+                0 => LevelFilter::Info,
+                1 => LevelFilter::Debug,
+                _ => LevelFilter::Trace,
+            }
+        }
+    }
+}
 
 #[derive(Clone)]
 struct State {
@@ -12,7 +38,9 @@ struct State {
 
 #[async_std::main]
 async fn main() -> Result<(), std::io::Error> {
-    tide::log::start();
+    let cli = Cli::parse();
+
+    tide::log::with_level(cli.log_level());
 
     let (mut tx, rx) = broadcast(16);
 
