@@ -1,0 +1,11 @@
+[package]
+name = "sse-tannoy"
+version = "0.1.0"
+authors = ["Jaime Valdemoros"]
+edition = "2021"
+
+[dependencies]
+async-broadcast = "0.7.1"
+async-std = { version = "1.12.0", features = ["attributes"] }
+serde = { version = "1.0.203", features = ["derive"] }
+tide = "0.16.0"
