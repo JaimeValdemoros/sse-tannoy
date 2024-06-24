@@ -32,10 +32,24 @@
     treefmtEval = eachSystem (pkgs: inputs.treefmt-nix.lib.evalModule pkgs treefmt-config);
   in {
     # For `nix build` & `nix run`:
-    defaultPackage = eachSystem (pkgs:
-      naersk.${pkgs.system}.buildPackage {
-        src = ./.;
-      });
+    defaultPackage = eachSystem (pkgs: self.packages.${pkgs.system}.sse-tannoy);
+
+    packages = eachSystem (pkgs: {
+      sse-tannoy = naersk.${pkgs.system}.buildPackage {
+        src =
+          pkgs.nix-gitignore.gitignoreSourcePure [
+            "flake.*"
+            ".github"
+          ]
+          ./.;
+      };
+      image = pkgs.dockerTools.buildImage {
+        name = "sse-tannoy";
+        config = {
+          Cmd = with self.packages.${pkgs.system}; ["${sse-tannoy}/bin/sse-tannoy"];
+        };
+      };
+    });
 
     # For `nix develop`:
     devShell = eachSystem (pkgs:

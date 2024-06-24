@@ -59,6 +59,8 @@ async fn main() -> Result<(), std::io::Error> {
     let mut app = tide::with_state(State { tx, rx });
 
     app.at("/").post(post);
+    app.at("/sse").get(tide::sse::endpoint(handler));
+    // Handle trailing slash as well
     app.at("/sse/").get(tide::sse::endpoint(handler));
 
     app.listen(cli.bind_addr()).await?;
