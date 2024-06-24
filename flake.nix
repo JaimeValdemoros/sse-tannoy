@@ -20,8 +20,14 @@
 
     treefmt-config = {pkgs, ...}: {
       projectRootFile = "flake.nix";
-      programs.alejandra.enable = true;
-      programs.rustfmt.enable = true;
+      programs = {
+        # Nix
+        alejandra.enable = true;
+        # Rust
+        rustfmt.enable = true;
+        # Everything else
+        prettier.enable = true;
+      };
     };
     treefmtEval = eachSystem (pkgs: inputs.treefmt-nix.lib.evalModule pkgs treefmt-config);
   in {
