@@ -43,6 +43,12 @@
           ]
           ./.;
       };
+      image = pkgs.dockerTools.buildImage {
+        name = "sse-tannoy";
+        config = {
+          Cmd = with self.packages.${pkgs.system}; ["${sse-tannoy}/bin/sse-tannoy"];
+        };
+      };
     });
 
     # For `nix develop`:
