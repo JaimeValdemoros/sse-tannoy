@@ -36,7 +36,12 @@
 
     packages = eachSystem (pkgs: {
       sse-tannoy = naersk.${pkgs.system}.buildPackage {
-        src = ./.;
+        src =
+          pkgs.nix-gitignore.gitignoreSourcePure [
+            "flake.*"
+            ".github"
+          ]
+          ./.;
       };
     });
 
