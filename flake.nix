@@ -32,10 +32,13 @@
     treefmtEval = eachSystem (pkgs: inputs.treefmt-nix.lib.evalModule pkgs treefmt-config);
   in {
     # For `nix build` & `nix run`:
-    defaultPackage = eachSystem (pkgs:
-      naersk.${pkgs.system}.buildPackage {
+    defaultPackage = eachSystem (pkgs: self.packages.${pkgs.system}.sse-tannoy);
+
+    packages = eachSystem (pkgs: {
+      sse-tannoy = naersk.${pkgs.system}.buildPackage {
         src = ./.;
-      });
+      };
+    });
 
     # For `nix develop`:
     devShell = eachSystem (pkgs:
